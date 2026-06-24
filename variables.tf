@@ -1,15 +1,79 @@
-resource_group_name = "rg-dev-hcp-oidc-weu"
-location            = "westeurope"
+variable "resource_group_name" {
+  description = "Name of the Azure resource group"
+  type        = string
+}
 
-vnet_name          = "vnet-dev-hcp-oidc-weu"
-vnet_address_space = ["10.20.0.0/16"]
+variable "location" {
+  description = "Azure region for the resources"
+  type        = string
+}
 
-subnet_name             = "snet-dev-workload-weu"
-subnet_address_prefixes = ["10.20.1.0/24"]
+variable "vnet_name" {
+  description = "Name of the virtual network"
+  type        = string
+}
 
-vm_name        = "vm-dev-hcp-oidc-01"
-vm_size        = "Standard_B2s"
-admin_username = "azureuser"
+variable "vnet_address_space" {
+  description = "Address space assigned to the virtual network"
+  type        = list(string)
 
-public_key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCfkOsW0rdGEofc+jRJ+EftQewzJi46PVGQ9BhrEtuTm/6jGJuD4GoepMvr8tyYUXW4Q9+2l1e3wjAROr/ued4a8ehZ/aKxPed39bUUi9Zm1814IycTgL8tvGoSB9yyee/sNUbLTe3xTvhTS1HKNh74fww/sjIZtH67BEUMHaqE2yBFKJs75aAJ3v/h+8QNW0Nq3FyQCL5x55bpMmqZf0oerGqkI8oCEVJgWZDA3zNlC2dUi6saa3pXuoCgAXtyj3/MxUaG1gSpM0LUJFRIogyjno/5hFKzqjF9OWWGSsNRpqGwBGB+c7/n84nWQ3dq2uMFZnLUlfF2j9rxqPbTGJ3FHTW51xnX/qLpuoFng8y9QookDyMDLj/tUfZGPxmWcKQ3ufhOsbzX/jinMrRjdjMXvi4Wl+7CUc+It8JCQ6IhLKHcUFbv0DMuMz9iU07e/Of13GPMdy00dy7yzdRzhemsBPbEdgAlSXorZBBKASSxo2cB0+NfLv4lNVmvP+U7z+e8atuQh0WjTIBP6Qu4+O4TWZQ11z6bJdjK/6/dejL8NtFpPydKpe9ePZWZraGz7yH8FmS4F47iuvQ+uFxrmEMc8cNAIoU81OjM7LxG9JRr7RMdMexMiUfW7uxwzTfxug2k2c2+21p0eRGF0iTOR2Yo+O315dIgLfTNKMFJkVyivQ== arize@azure-vm"
-allowed_ssh_cidr = "192.168.1.130/32"
+  validation {
+    condition     = length(var.vnet_address_space) > 0
+    error_message = "At least one virtual network address range must be provided."
+  }
+}
+
+variable "subnet_name" {
+  description = "Name of the subnet"
+  type        = string
+}
+
+variable "subnet_address_prefixes" {
+  description = "Address prefixes assigned to the subnet"
+  type        = list(string)
+
+  validation {
+    condition     = length(var.subnet_address_prefixes) > 0
+    error_message = "At least one subnet address prefix must be provided."
+  }
+}
+
+variable "vm_name" {
+  description = "Name of the Linux virtual machine"
+  type        = string
+}
+
+variable "vm_size" {
+  description = "Azure virtual machine size"
+  type        = string
+  default     = "Standard_B2s"
+}
+
+variable "admin_username" {
+  description = "Administrator username for the virtual machine"
+  type        = string
+  default     = "azureuser"
+}
+
+variable "public_key" {
+  description = "SSH public key content used to access the virtual machine"
+  type        = string
+
+  validation {
+    condition = (
+      startswith(var.public_key, "ssh-rsa") ||
+      startswith(var.public_key, "ssh-ed25519")
+    )
+    error_message = "The public_key value must contain a valid SSH public key."
+  }
+}
+
+variable "allowed_ssh_cidr" {
+  description = "Public CIDR range allowed to connect to SSH"
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.allowed_ssh_cidr, 0))
+    error_message = "allowed_ssh_cidr must be a valid CIDR range."
+  }
+}

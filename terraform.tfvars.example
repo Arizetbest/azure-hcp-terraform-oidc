@@ -1,0 +1,15 @@
+resource_group_name = "rg-dev-hcp-oidc-weu"
+location            = "westeurope"
+
+vnet_name          = "vnet-dev-hcp-oidc-weu"
+vnet_address_space = ["10.20.0.0/16"]
+
+subnet_name             = "snet-dev-workload-weu"
+subnet_address_prefixes = ["10.20.1.0/24"]
+
+vm_name        = "vm-dev-hcp-oidc-01"
+vm_size        = "Standard_B2s"
+admin_username = "azureuser"
+
+public_key      = "ssh-ed25519 AAAA_REPLACE_WITH_YOUR_PUBLIC_KEY"
+allowed_ssh_cidr = "YOUR_PUBLIC_IP/32"
