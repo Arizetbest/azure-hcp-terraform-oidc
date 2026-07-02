@@ -1,0 +1,8 @@
+﻿{
+    "subject":  "organization:practice-cloud-labs:project:azure-practice-project:workspace:azure-hcp-terraform-oidc:run_phase:plan",
+    "audiences":  [
+                      "api://AzureADTokenExchange"
+                  ],
+    "issuer":  "https://app.terraform.io",
+    "name":  "terraform-plan"
+}
